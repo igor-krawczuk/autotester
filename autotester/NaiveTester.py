@@ -26,14 +26,14 @@ class NaiveTester(object):
 
 
     def run(self,CURRENT_SAMPLE):
-        self.curstate=self.planner.estimate_state(None)
+        self.curstate=self.estimator.estimate_state(None,self.curstate)
         print("StartState",self.curstate)
         next_action= self.planner.get_action(self.curstate)
         print("Action",next_action)
         while next_action is not None:
             new_datum = self.executor.execute(next_action, CURRENT_SAMPLE)
             print("Datum",new_datum)
-            new_state = self.estimator.estimate_state(datum)
+            new_state = self.estimator.estimate_state(datum,self.curstate)
             self.log(next_action,self.curstate,new_state)
             self.curstate=new_state
             print("NewState",self.curstate)
