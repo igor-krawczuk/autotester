@@ -33,7 +33,7 @@ class NaiveTester(object):
         while next_action is not None:
             new_datum = self.executor.execute(next_action, CURRENT_SAMPLE)
             print("Datum",new_datum)
-            new_state = self.estimator.estimate_state(datum,self.curstate)
+            new_state = self.estimator.estimate_state(new_datum,self.curstate)
             self.log(next_action,self.curstate,new_state)
             self.curstate=new_state
             print("NewState",self.curstate)
