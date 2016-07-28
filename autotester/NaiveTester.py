@@ -15,7 +15,7 @@ class NaiveTester(object):
         self.notificator = notificator
 
     def log(self,action,startState,endState):
-        newlog = Log(id=self.next_id,startState=startState,aciton=action,endState=endState,timestamp=datetime.now())
+        newlog = Log(id=self.next_id,startState=startState,action=action,endState=endState,timestamp=datetime.now())
         self.test_log.append(newlog)
         self.next_id+=1
 
