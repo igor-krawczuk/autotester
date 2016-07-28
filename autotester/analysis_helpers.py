@@ -1,3 +1,5 @@
+import numpy as np
+import pandas as pd
 # some very basic analysis functions
 def get_R(d, current_column='EI', voltage_column='EV'):
     """
