@@ -34,7 +34,7 @@ class NaiveExecutor(object):
             self.tester.run_test(impl,force_wait=True,force_new_setup=True)
             was_pulse=True
         else:
-            ret,out =self.tester.run_test(impl,force_wait=True,force_new_setup=True)
+            ret,out =self.tester.run_test(impl,force_wait=True,force_new_setup=True,auto_read=True)
             out,series_dict,raw =out
             out=add_energy(out)
             was_pulse=False
@@ -49,7 +49,7 @@ class NaiveExecutor(object):
 
     def checkR(self, CURRENT_SAMPLE):
         self.read_precon_closure()
-        ret,out =self.tester.run_test(self.read_setup,force_wait=True,force_new_setup=True)
+        ret,out =self.tester.run_test(self.read_setup,force_wait=True,force_new_setup=True,auto_read=True)
         out,series_dict,raw =out
         out=add_energy(out)
         out.to_csv("{}_{}_{}".format(mytimestamp(),CURRENT_SAMPLE,"read"))
