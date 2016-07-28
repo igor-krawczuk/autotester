@@ -8,7 +8,7 @@ class NaivePlanner(object):
         pass
 
     def get_action(self,state):
-        if state.burnedOut or state.burnedTrough:
+        if state.burnedOut or state.burnedThrough:
             return None
         elif not state.formed:
             return HighLevelActions.FORM
