@@ -1,6 +1,6 @@
 from .abstractions import *
 from .helpers import mytimestamp
-from .analysis_helpers import (add_energy,)
+from .analysis_helpers import (add_energy,find_set_V,get_R,add_resistance)
 class NaiveExecutor(object):
     """
     Takes a high level action and executes the implementation based on its stored skills
@@ -40,7 +40,7 @@ class NaiveExecutor(object):
             out=add_energy(out)
             was_pulse=False
             if action == HighLevelActions.FORM:
-                self.formV = find_setV(out)
+                self.formV = find_set_V(out)
             if action in (HighLevelActions.SET_SWEEP,HighLevelActions.RESET_SWEEP):
                 self.timesAnnealed+=1
             out.to_csv("{}_{}_{}".format(mytimestamp(),CURRENT_SAMPLE,action.name))
