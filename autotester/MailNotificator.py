@@ -1,5 +1,5 @@
 import smtplib
-from email.MIMEMultipart import MIMEMultipart
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 class MailNotificator(object):
