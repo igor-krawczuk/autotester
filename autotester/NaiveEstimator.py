@@ -36,5 +36,5 @@ class NaiveEstimator(object):
         newBurnedThrough = newstate.actionsSinceStateChange > self.burned_THRESHOLD and newstate.LRS
         newBurnedOut = newstate.actionsSinceStateChange > self.burned_THRESHOLD and newstate.HRS
 
-        newstate =newstate._replace(burnedThrough = newBurntThrough,burnedOut= newBurnedOut)
+        newstate =newstate._replace(burnedThrough = newBurnedThrough,burnedOut= newBurnedOut)
         return newstate
