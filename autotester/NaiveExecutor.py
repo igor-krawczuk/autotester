@@ -43,7 +43,7 @@ class NaiveExecutor(object):
                 self.formV = find_set_V(out)
             if action in (HighLevelActions.SET_SWEEP,HighLevelActions.RESET_SWEEP):
                 self.timesAnnealed+=1
-            out.to_csv("{}_{}_{}".format(mytimestamp(),CURRENT_SAMPLE,action.name))
+            out.to_csv("{}_{}_{}.csv".format(mytimestamp(),CURRENT_SAMPLE,action.name))
         R_after=self.checkR(CURRENT_SAMPLE)
         newdatum = Datum(R=R_after,V=V,gateV=gateV,timesAnnealed=self.timesAnnealed,formV=self.formV,wasPulse=was_pulse)
         return newdatum
@@ -53,6 +53,6 @@ class NaiveExecutor(object):
         ret,out =self.tester.run_test(self.read_setup,force_wait=True,force_new_setup=True,auto_read=True)
         out,series_dict,raw =out
         out=add_energy(out)
-        out.to_csv("{}_{}_{}".format(mytimestamp(),CURRENT_SAMPLE,"read"))
+        out.to_csv("{}_{}_{}.csv".format(mytimestamp(),CURRENT_SAMPLE,"read"))
         R= get_R(out)
         return R
