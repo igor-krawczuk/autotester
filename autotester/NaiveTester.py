@@ -25,12 +25,13 @@ class NaiveTester(object):
             pickle.dump(self.log,f,pickle.HIGHEST_PROTOCOL)
 
 
-    def run(self,CURRENT_SAMPLE):
-        self.curstate=self.estimator.estimate_state(None,self.curstate)
+    def run(self,CURRENT_SAMPLE, max_steps=100,startState=None):
+        self.curstate=self.estimator.estimate_state(startState,self.curstate)
         print("StartState",self.curstate)
         next_action= self.planner.get_action(self.curstate)
         print("Action",next_action)
-        while next_action is not None:
+        steps=0
+        while next_action is not None and step < max_steps:
             new_datum = self.executor.execute(next_action, CURRENT_SAMPLE)
             print("Datum",new_datum)
             new_state = self.estimator.estimate_state(new_datum,self.curstate)
@@ -39,5 +40,6 @@ class NaiveTester(object):
             print("NewState",self.curstate)
             next_action= self.planner.get_action(self.curstate)
             print("Action",next_action)
+            steps+=1
         self.save_log(CURRENT_SAMPLE)
         self.notificator.done()
