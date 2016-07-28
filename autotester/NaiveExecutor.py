@@ -5,11 +5,12 @@ class NaiveExecutor(object):
     Takes a high level action and executes the implementation based on its stored skills
     """
 
-    def __init__(self,tester, form, reset_sweep,set_sweep,set_pulse,reset_pulse,read_setup):
+    def __init__(self,tester, form, reset_sweep,set_sweep,set_pulse,reset_pulse,read_setup, read_precon):
         self.formV=None
         self.timesAnnealed=0
 
         self.read_setup = read_setup
+        self.read_precon_closure = read_precon
 
         self.tester = tester
         self.implementations={HighLevelActions.FORM:form,
@@ -25,13 +26,14 @@ class NaiveExecutor(object):
         impl = self.implementations[action]["test_setup"]
         V=self.implementations[action]["V"]
         gateV=self.implementations[action]["gateV"]
+        precon_closure=self.implementations[action].get("precondition_closure")
+        if precon_closure is not None:
+            precon_closure()
 
         if action in (HighLevelActions.SET_PULSE,HighLevelActions.RESET_PULSE):
-            b15.set_SMUSPGU_selector(SMU_SPGU_port.Module_1_Output_1,SMU_SPGU_state.connect_relay_SPGU)
             self.tester.run_test(impl,force_wait=True,force_new_setup=True)
             was_pulse=True
         else:
-            self.tester.set_SMUSPGU_selector(SMU_SPGU_port.Module_1_Output_1,SMU_SPGU_state.connect_relay_SMU)
             ret,out =self.tester.run_test(impl,force_wait=True,force_new_setup=True)
             out,series_dict,raw =out
             out=add_energy(out)
@@ -46,7 +48,7 @@ class NaiveExecutor(object):
         return newdatum
 
     def checkR(self, CURRENT_SAMPLE):
-        self.tester.set_SMUSPGU_selector(SMU_SPGU_port.Module_1_Output_1,SMU_SPGU_state.connect_relay_SMU)
+        self.read_precon_closure()
         ret,out =self.tester.run_test(self.read_setup,force_wait=True,force_new_setup=True)
         out,series_dict,raw =out
         out=add_energy(out)
