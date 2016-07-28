@@ -14,7 +14,7 @@ Datum=namedtuple("Datum",["R",
                     #"meanMaxHistReSetAnneal,
                     #"meanSetVAnneal,
                     #meanMaxCurResetAnneal,
-                  ]
+                  ])
     
 
 class HighLevelActions(Enum):
@@ -26,13 +26,13 @@ class HighLevelActions(Enum):
     READ = 5
 
 class State( namedtuple("__State",["LRS","HRS","deep","formed","annealed","burnedThrough","burnedOut","untouched",
-                    "actionsSinceStateChange"]):
+                    "actionsSinceStateChange"])):
         def __new__(cls,LRS=None,HRS=None,deep=None,formed=None,annealed=None,burnedThrough=None,burnedOut=None,untouched=None,actionsSinceStateChange=None):
            assert not(LRS and HRS) 
            assert not untouched and(LRS or HRS or formed or annealed)
            return super(State,cls).__new__(LRS,HRS,deep,formed,annealed,burnedThrough,burnedOut,untouched,actionsSinceStateChange)
 
-        @static_method
+        @staticmethod
         def get_pristine():
             return State(untouched=True,LRS=False,HRS=False,deep=False,
                 formed=False,annealed=False,burnedThrough=False,
