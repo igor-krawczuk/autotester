@@ -30,7 +30,7 @@ class State( namedtuple("__State",["LRS","HRS","deep","formed","annealed","burne
         def __new__(cls,LRS=None,HRS=None,deep=None,formed=None,annealed=None,burnedThrough=None,burnedOut=None,untouched=None,actionsSinceStateChange=None):
            assert not(LRS and HRS) 
            assert not (untouched and(LRS or HRS or formed or annealed))
-           return super(State,cls).__new__(LRS,HRS,deep,formed,annealed,burnedThrough,burnedOut,untouched,actionsSinceStateChange)
+           return super(State,cls).__new__(cls,LRS,HRS,deep,formed,annealed,burnedThrough,burnedOut,untouched,actionsSinceStateChange)
 
         @staticmethod
         def get_pristine():
