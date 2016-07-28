@@ -30,7 +30,7 @@ class NaiveTester(object):
         print("StartState",self.curstate)
         next_action= self.planner.get_action(self.curstate)
         print("Action",next_action)
-        steps=0
+        step=0
         while next_action is not None and step < max_steps:
             new_datum = self.executor.execute(next_action, CURRENT_SAMPLE)
             print("Datum",new_datum)
@@ -40,6 +40,6 @@ class NaiveTester(object):
             print("NewState",self.curstate)
             next_action= self.planner.get_action(self.curstate)
             print("Action",next_action)
-            steps+=1
+            step+=1
         self.save_log(CURRENT_SAMPLE)
         self.notificator.done()
