@@ -9,7 +9,7 @@ class NaiveExecutor(object):
         self.formV=None
         self.timesAnnealed=0
 
-        self.read_setup = read
+        self.read_setup = read_setup
 
         self.tester = tester
         self.implementations={HighLevelActions.FORM:form,
