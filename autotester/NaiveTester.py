@@ -22,7 +22,7 @@ class NaiveTester(object):
     def save_log(self,CURRENT_SAMPLE):
         import pickle
         with open("{}_{}_autorun.pickle".format(mytimestamp(),CURRENT_SAMPLE),"wb") as f:
-            pickle.dumps(self.log,f,pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self.log,f,pickle.HIGHEST_PROTOCOL)
 
 
     def run(self,CURRENT_SAMPLE):
