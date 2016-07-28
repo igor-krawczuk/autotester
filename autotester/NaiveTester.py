@@ -37,7 +37,7 @@ class NaiveTester(object):
             self.log(next_action,self.curstate,new_state)
             self.curstate=new_state
             print("NewState",self.curstate)
-            next_action= self.get_action(self.curstate)
+            next_action= self.planner.get_action(self.curstate)
             print("Action",next_action)
         self.save_log(CURRENT_SAMPLE)
         self.notificator.done()
