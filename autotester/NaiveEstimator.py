@@ -1,3 +1,4 @@
+from .abstractions import State
 class NaiveEstimator(object):
 
     def __init__(self):
