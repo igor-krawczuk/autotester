@@ -1,16 +1,16 @@
 from .abstractions import State
 class NaiveEstimator(object):
 
-    def __init__(self):
-        self.LRS_THRESHOLD = 5000
-        self.HRS_THRESHOLD = 11e3
+    def __init__(self, LRS_THRESHOLD=10e3, HRS_THRESHOLD=20e3, deep_THRESHOLD=5,annealGoal=10,burned_THRESHOLD=15):
+        self.LRS_THRESHOLD = LRS_THRESHOLD
+        self.HRS_THRESHOLD = HRS_THRESHOLD
         # after this many  failed transitions, we assume we are in a "deep" state
-        self.deep_THRESHOLD = 3
+        self.deep_THRESHOLD = deep_THRESHOLD
         # we want to anneal at least this many times, meaning we want to do this many DC sweeps. divide by half for dc cycles
-        self.annealGoal = 10
+        self.annealGoal = annealGoal
 
         # after this many failed transitions, we treat it as a burned sample
-        self.burned_THRESHOLD = 15
+        self.burned_THRESHOLD = burned_THRESHOLD
 
         assert self.LRS_THRESHOLD < self.HRS_THRESHOLD
     
