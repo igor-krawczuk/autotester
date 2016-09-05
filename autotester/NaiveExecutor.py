@@ -29,18 +29,18 @@ class NaiveExecutor(object):
         if adaptation==Adaptations.NOCHANGE:
             pass
 
-        elif adaptation == Adaptations.RESET_PV_INC
+        elif adaptation == Adaptations.RESET_PV_INC:
             old =self.implementations[HighLevelActions.RESET_PULSE]["test_setup"]
             self.implementations[HighLevelActions.RESET_pulse]["test_setup"]=old._replace(pulse_peak=pulse_peak-0.1)
 
-        elif adaptation == Adaptations.SET_PV_INC
+        elif adaptation == Adaptations.SET_PV_INC:
             old =self.implementations[HighLevelActions.SET_PULSE]["test_setup"]
             self.implementations[HighLevelActions.SET_PULSE]["test_setup"]=old._replace(pulse_peak=old.pulse_peak+0.1)
 
-        elif adaptation == Adaptations.SET_V_INC
+        elif adaptation == Adaptations.SET_V_INC:
             old =self.implementations[HighLevelActions.SET_SWEEP]["test_setup"]
             self.implementations[HighLevelActions.SET_SWEEP]["test_setup"]=old._replace(stop=old.stop+0.1)
-        elif adaptation == Adaptations.RESET_V_INC
+        elif adaptation == Adaptations.RESET_V_INC:
             old =self.implementations[HighLevelActions.RESET_SWEEP]["test_setup"]
             self.implementations[HighLevelActions.RESET_SWEEP]["test_setup"]=old.replace(stop=old.stop-0.1)
 
