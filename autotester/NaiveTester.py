@@ -39,7 +39,7 @@ class NaiveTester(object):
             self.log(next_action,self.curstate,new_state)
             self.curstate=new_state
             print("NewState",self.curstate)
-            adaptation = self.planner.get_adaptation(next_state,self.curstate)
+            adaptation = self.planner.get_adaptation(next_action,self.curstate)
             next_action= self.planner.get_action(self.curstate)
             print("Adaptation",adaptation)
             print("Action",next_action)
