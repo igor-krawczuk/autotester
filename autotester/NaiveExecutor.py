@@ -17,8 +17,8 @@ class NaiveExecutor(object):
         self.implementations={HighLevelActions.FORM:form,
                     HighLevelActions.RESET_SWEEP:reset_sweep,
                     HighLevelActions.SET_SWEEP:set_sweep,
-                    HighLevelActions.RESET_PULSE:set_pulse,
-                    HighLevelActions.SET_PULSE:reset_pulse
+                    HighLevelActions.RESET_PULSE:reset_pulse,
+                    HighLevelActions.SET_PULSE:set_pulse
                     }
 
     def execute(self,action,CURRENT_SAMPLE):
