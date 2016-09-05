@@ -8,7 +8,7 @@ class NaivePlanner(object):
     def __init__(self):
         pass
 
-    def _get_pulse_adaptation(state):
+    def _get_pulse_adaptation(self,state):
         if state.actionsSinceStateChange >1:
             if state.LRS:
                 return Adaptations.RESET_PV_INC
@@ -17,7 +17,7 @@ class NaivePlanner(object):
         else:
             return Adaptations.NOCHANGE
 
-    def _get_sweep_adaptation(state):
+    def _get_sweep_adaptation(self,state):
         if state.actionsSinceStateChange >1:
             if state.LRS:
                 return Adaptations.RESET_V_INC
@@ -30,7 +30,7 @@ class NaivePlanner(object):
         if last_action in (HighLevelActions.RESET_PULSE, HighLevelActions.SET_PULSE):
             return _get_pulse_adaptation(state)
         elif last_action in (HighLevelActions.RESET_SWEEP,HighLevelActions.SET_SWEEP):
-            return _get_pulse_adaptation(state)
+            return _get_sweep_adaptation(state)
 
     def get_action(self,state):
         if state.burnedOut or state.burnedThrough:
