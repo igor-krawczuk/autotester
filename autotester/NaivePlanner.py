@@ -26,7 +26,7 @@ class NaivePlanner(object):
         else:
             return Adaptations.NOCHANGE
 
-    def get_adaptation(last_action,state):
+    def get_adaptation(self,last_action,state):
         if last_action in (HighLevelActions.RESET_PULSE, HighLevelActions.SET_PULSE):
             return _get_pulse_adaptation(state)
         elif last_action in (HighLevelActions.RESET_SWEEP,HighLevelActions.SET_SWEEP):
