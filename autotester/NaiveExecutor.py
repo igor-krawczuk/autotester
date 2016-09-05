@@ -1,6 +1,9 @@
 from .abstractions import *
 from .helpers import mytimestamp
 from .analysis_helpers import (add_energy,find_set_V,get_R,add_resistance)
+from collections import namedtuple
+
+controlSetups=namedtuple("_controlSetups",["reset","set","read","resetSweep","setSweep"])
 class NaiveExecutor(object):
     """
     Takes a high level action and executes the implementation based on its stored skills
@@ -10,8 +13,9 @@ class NaiveExecutor(object):
         self.formV=None
         self.timesAnnealed=0
 
-        self.read_setup = read_setup
+
         self.read_precon_closure = read_precon
+        self.setups =controlSetups(reset_pulse,set_pulse,read_setup,reset_sweep,set_sweep)
 
         self.tester = tester
         self.implementations={HighLevelActions.FORM:form,
@@ -21,8 +25,30 @@ class NaiveExecutor(object):
                     HighLevelActions.SET_PULSE:set_pulse
                     }
 
-    def execute(self,action,CURRENT_SAMPLE):
+    def adapt(self, adaptation):
+        if adaptation==Adaptations.NOCHANGE:
+            pass
+
+        elif adaptation == Adaptations.RESET_PV_INC
+            old =self.implementations[HighLevelActions.RESET_PULSE]["test_setup"]
+            self.implementations[HighLevelActions.RESET_pulse]["test_setup"]=old._replace(pulse_peak=pulse_peak-0.1)
+
+        elif adaptation == Adaptations.SET_PV_INC
+            old =self.implementations[HighLevelActions.SET_PULSE]["test_setup"]
+            self.implementations[HighLevelActions.SET_PULSE]["test_setup"]=old._replace(pulse_peak=old.pulse_peak+0.1)
+
+        elif adaptation == Adaptations.SET_V_INC
+            old =self.implementations[HighLevelActions.SET_SWEEP]["test_setup"]
+            self.implementations[HighLevelActions.SET_SWEEP]["test_setup"]=old._replace(stop=old.stop+0.1)
+        elif adaptation == Adaptations.RESET_V_INC
+            old =self.implementations[HighLevelActions.RESET_SWEEP]["test_setup"]
+            self.implementations[HighLevelActions.RESET_SWEEP]["test_setup"]=old.replace(stop=old.stop-0.1)
+
+
+    def execute(self,adaptation,action,CURRENT_SAMPLE):
         was_pulse=None
+
+        self.adapt(adaptation)
 
         impl = self.implementations[action]["test_setup"]
         V=self.implementations[action]["V"]
@@ -50,7 +76,7 @@ class NaiveExecutor(object):
 
     def checkR(self, CURRENT_SAMPLE):
         self.read_precon_closure()
-        ret,out =self.tester.run_test(self.read_setup,force_wait=True,force_new_setup=True,auto_read=True)
+        ret,out =self.tester.run_test(self.setups.read,force_wait=True,force_new_setup=True,auto_read=True)
         out,series_dict,raw =out
         out=add_energy(out)
         out.to_csv("{}_{}_{}.csv".format(mytimestamp(),CURRENT_SAMPLE,"read"))
