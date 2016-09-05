@@ -28,9 +28,9 @@ class NaivePlanner(object):
 
     def get_adaptation(self,last_action,state):
         if last_action in (HighLevelActions.RESET_PULSE, HighLevelActions.SET_PULSE):
-            return _get_pulse_adaptation(state)
+            return self._get_pulse_adaptation(state)
         elif last_action in (HighLevelActions.RESET_SWEEP,HighLevelActions.SET_SWEEP):
-            return _get_sweep_adaptation(state)
+            return self._get_sweep_adaptation(state)
 
     def get_action(self,state):
         if state.burnedOut or state.burnedThrough:
