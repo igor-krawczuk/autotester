@@ -1,4 +1,5 @@
 from collections import namedtuple
+from datetime import datetime
 from enum import Enum
 
 class controlState(object):
@@ -69,7 +70,7 @@ class pulseControl(controlState):
                 self.ground_channel.inp_channel,self.gate_channel)[0]
 
 
-Log = namedtuple("Log",["id","startState","action","endState","timestamp"])
+Log = namedtuple("Log",["id","adaptation","action","startState","endState","timestamp","pulseControl","sweepControl"])
 
 Datum=namedtuple("Datum",["R",
                   "V",
