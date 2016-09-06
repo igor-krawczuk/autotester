@@ -31,6 +31,10 @@ class controlState(object):
             d["log_id"]=log_id
         d["last_change"]=self.last_change
         return d
+    def getV(self,action):
+      raise NotImplementedError("implement a sensinple switch on the given action to access the Voltage")
+    def getGateV(self,action)
+      raise NotImplementedError("implement a sensinple switch on the given action to access the gateVoltage")
 
 class sweepControl(controlState):
     __slots__= ["setBase","setV","setGateV",
@@ -72,6 +76,30 @@ class sweepControl(controlState):
         self.inp_channel = inp_channel
         super().__init__()
 
+    def getV(self,action):
+      if action==HighLevelActions.RESET_SWEEP:
+        return self.resetV
+      elif action==HighLevelActions.SET_SWEEP:
+        return self.setV
+      elif action==HighLevelActions.FORM:
+        return self.formV
+      elif action==HighLevelActions.READ:
+        return self.readV
+      else:
+        raise ValueError("No Voltage defined for this action")
+
+    def getGateV(self,action):
+      if action==HighLevelActions.RESET_SWEEP:
+        return self.resetGateV
+      elif action==HighLevelActions.SET_SWEEP:
+        return self.setGateV
+      elif action==HighLevelActions.FORM:
+        return self.formGateV
+      elif action==HighLevelActions.READ:
+        return self.readGateV
+      else:
+        raise ValueError("No gate voltage defined for this action")
+
     def getNewSet(self):
         return get_Vsweep(self.setBase, self.setV, self.steps, compliance=300e-6,
                 measure_range=MeasureRanges_I.full_auto,gate_voltage=self.setGateV, ground=self.ground_channel)[0]
@@ -104,6 +132,22 @@ class pulseControl(controlState):
         self.gate_channel = gate_channel
         self.inp_channel = inp_channel
         super().__init__()
+
+    def getV(self,action):
+      if action==HighLevelActions.RESET_PULSE:
+        return self.resetV
+      elif action==HighLevelActionsPULSESWEEP:
+        return self.setV
+      else:
+        raise ValueError("No Voltage defined for this action")
+
+    def getGateV(self,action):
+      if action==HighLevelActions.RESET_PULSE:
+        return self.resetGateV
+      elif action==HighLevelActionsPULSESWEEP:
+        return self.setGateV
+      else:
+        raise ValueError("No gate Voltage defined for this action")
 
     def getNewSet(self, oldSetup):
         return get_pulse(0,self.setV,self.width,1,

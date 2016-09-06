@@ -15,13 +15,13 @@ class NaiveExecutor(Executor):
     Takes a high level action and executes the implementation based on its stored skills
     """
 
-    def __init__(self,tester, initSweepControl,initPulseControl, read_precon):
+    def __init__(self,tester, initSweepControl,initPulseControl,precon_closures ):
         self.formV=None
         self.timesAnnealed=0
         self.CURRENT_SAMPLE=None
 
         self.read_setup = initSweepControl.getNewRead()
-        self.read_precon_closure = read_precon
+        self.precon_closures=precon_closures
 
         self.tester = tester
 
@@ -63,10 +63,10 @@ class NaiveExecutor(Executor):
             self.timesAnnealed=0
             action = HighLevelActions.RESET_SWEEP
 
-        impl = self.implementations[action]["test_setup"]
-        V=self.implementations[action]["V"]
-        gateV=self.implementations[action]["gateV"]
-        precon_closure=self.implementations[action].get("precondition_closure")
+        impl = self.implementations[action]
+        V=impl.getV(action)
+        gateV=implt.getGateV(action)
+        precon_closure=self.precon_closures.get(action)
         if precon_closure is not None:
             precon_closure()
 
@@ -91,7 +91,9 @@ class NaiveExecutor(Executor):
 
 
     def checkR(self ):
-        self.read_precon_closure()
+        read_precon = self.precon_closures.get(HighLevelActions.READ)
+        if read_precon is not None:
+          read_precon()
         ret,out =self.tester.run_test(self.read_setup,force_wait=True,force_new_setup=True,auto_read=True)
         out,series_dict,raw =out
         out=add_energy(out)
