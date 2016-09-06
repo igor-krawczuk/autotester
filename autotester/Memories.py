@@ -1,4 +1,4 @@
-import pickle
+import dill
 from .abstractions import *
 import dataset
 from collections import deque
@@ -6,7 +6,7 @@ from collections import deque
 
 class NaiveMemory(object):
     """
-    simplest possible storage enginem simply takes the communicator classes and appends them in a list which gets pickled
+    simplest possible storage enginem simply takes the communicator classes and appends them in a list which gets dilld
     """
     def __init__(self):
         self.next_id =1
@@ -41,8 +41,9 @@ class NaiveMemory(object):
         self.next_id+=1
 
     def save_log(self,CURRENT_SAMPLE):
-        with open("{}_{}_autorun.pickle".format(mytimestamp(),CURRENT_SAMPLE),"wb") as f:
-            pickle.dump(self.log,f,pickle.HIGHEST_PROTOCOL)
+      temp_log = [l.to_dicts() for l in self.test_log]
+      with open("{}_{}_autorun.dill".format(mytimestamp(),CURRENT_SAMPLE),"wb") as f:
+            dill.dump(temp_log,f)
 
 class PostgresMemory(object):
     """
@@ -54,7 +55,7 @@ class PostgresMemory(object):
 
         self.sync_every=sync_every
         self.since_last_sync=0
-        
+
         self.test_log_local =deque()
         self.test_log_synced=[]
 
@@ -101,7 +102,9 @@ class PostgresMemory(object):
             self.test_log_synced.append(temp_log)
 
     def save_log(self,CURRENT_SAMPLE):
-        with open("{}_{}_autorun_unsynced.pickle".format(mytimestamp(),CURRENT_SAMPLE),"wb") as f:
-            pickle.dump(self.test_log_local,f,pickle.HIGHEST_PROTOCOL)
-        with open("{}_{}_autorun_synced.pickle".format(mytimestamp(),CURRENT_SAMPLE),"wb") as f:
-            pickle.dump(self.test_log_synced,f,pickle.HIGHEST_PROTOCOL)
+      temp_log = [l.to_dicts() for l in self.test_log_local]
+      with open("{}_{}_autorun_unsynced.dill".format(mytimestamp(),CURRENT_SAMPLE),"wb") as f:
+          dill.dump(temp_log,f)
+      temp_log = [l.to_dicts() for l in self.test_log_synced]
+      with open("{}_{}_autorun_synced.dill".format(mytimestamp(),CURRENT_SAMPLE),"wb") as f:
+          dill.dump(self.test_log_synced,f,dill.HIGHEST_PROTOCOL)

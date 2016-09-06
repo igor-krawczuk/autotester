@@ -17,7 +17,8 @@ setup(
     "agilentpyvisa",
     "dataset",
     "pandas",
-    "numpy"
+    "numpy",
+    "dill"
     ],
     dependency_links=[ "git+https://github.com/wojcech/agilentpyvisa.git#egg=agilentpyvisa"],
     classifiers = [
