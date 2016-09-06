@@ -55,4 +55,15 @@ class Test_NaiveAdaptivePlanner:
         state = None
         with pytest.raises(AttributeError):
             adaptive.get_adaptation(last_action,state)
-        assert False # TODO: write tests describing the expected choices
+        state = State(untouched=False,LRS=True,HRS=False,deep=False,
+                    formed=True,annealed=True,burnedThrough=False,
+                    burnedOut=False,actionsSinceStateChange=3)
+        assert Adaptations.RESET_V_INC == adaptive.get_adaptation(HighLevelActions.RESET_SWEEP,state)
+        assert Adaptations.RESET_PV_INC == adaptive.get_adaptation(HighLevelActions.RESET_PULSE,state)
+
+        state = State(untouched=False,LRS=False,HRS=True,deep=False,
+                    formed=True,annealed=True,burnedThrough=False,
+                    burnedOut=False,actionsSinceStateChange=3)
+
+        assert Adaptations.SET_V_INC == adaptive.get_adaptation(HighLevelActions.SET_SWEEP,state)
+        assert Adaptations.SET_PV_INC == adaptive.get_adaptation(HighLevelActions.SET_PULSE,state)

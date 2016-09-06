@@ -27,13 +27,15 @@ class NaiveExecutor(Executor):
 
         self.sweepControl = initSweepControl
         self.pulseControl = initPulseControl
-        self.adaptation = 0.1
+        self.stepSize = 0.1
 
         self.implementations={HighLevelActions.FORM: initSweepControl.getNewForm(),
                     HighLevelActions.RESET_SWEEP: initSweepControl.getNewReset(),
                     HighLevelActions.SET_SWEEP: initSweepControl.getNewSet(),
                     HighLevelActions.RESET_PULSE: initPulseControl.getNewReset(),
                     HighLevelActions.SET_PULSE: initPulseControl.getNewSet(),
+                    HighLevelActions.READ: initPulseControl.getNewRead(),
+                    HighLevelActions.FORM: initPulseControl.getNewForm(),
                     }
 
     def reset(self):
@@ -42,16 +44,28 @@ class NaiveExecutor(Executor):
         if adaptation==Adaptations.NOCHANGE:
             pass
         elif adaptation == Adaptations.RESET_PV_INC:
-            self.pulseControl.adapt("resetV",adaptation)
+            self.pulseControl.adapt("resetV",-1.0*self.stepSize)
             self.implementations[HighLevelActions.RESET_PULSE]["test_setup"]=self.pulseControl.getNewReset()
         elif adaptation == Adaptations.SET_PV_INC:
-            self.pulseControl.adapt("setV",adaptation)
+            self.pulseControl.adapt("setV",self.stepSize)
             self.implementations[HighLevelActions.SET_PULSE]["test_setup"]=self.pulseControl.getNewSet()
         elif adaptation == Adaptations.SET_V_INC:
-            self.sweepControl.adapt("setV",adaptation)
+            self.sweepControl.adapt("setV",self.stepSize)
             self.implementations[HighLevelActions.SET_SWEEP]["test_setup"]=self.sweepControl.getNewSet()
         elif adaptation == Adaptations.RESET_V_INC:
-            self.sweepControl.adapt("resetV",-1.0*adaptation)
+            self.sweepControl.adapt("resetV",-1.0*self.stepSize)
+            self.implementations[HighLevelActions.RESET_SWEEP]["test_setup"]=self.sweepControl.getNewReset()
+        elif adaptation == Adaptations.RESET_PV_DEC:
+            self.pulseControl.adapt("resetV",self.stepSize)
+            self.implementations[HighLevelActions.RESET_PULSE]["test_setup"]=self.pulseControl.getNewReset()
+        elif adaptation == Adaptations.SET_PV_DEC:
+            self.pulseControl.adapt("setV",-1.0*self.stepSize)
+            self.implementations[HighLevelActions.SET_PULSE]["test_setup"]=self.pulseControl.getNewSet()
+        elif adaptation == Adaptations.SET_V_DEC:
+            self.sweepControl.adapt("setV",-1.0*self.stepSize)
+            self.implementations[HighLevelActions.SET_SWEEP]["test_setup"]=self.sweepControl.getNewSet()
+        elif adaptation == Adaptations.RESET_V_DEC:
+            self.sweepControl.adapt("resetV",self.stepSize)
             self.implementations[HighLevelActions.RESET_SWEEP]["test_setup"]=self.sweepControl.getNewReset()
         else:
             raise ValueError("Please pass a valid value from the HighLevelActions Enum")
@@ -65,7 +79,7 @@ class NaiveExecutor(Executor):
 
         impl = self.implementations[action]
         V=impl.getV(action)
-        gateV=implt.getGateV(action)
+        gateV=impl.getGateV(action)
         precon_closure=self.precon_closures.get(action)
         if precon_closure is not None:
             precon_closure()

@@ -7,6 +7,9 @@ from autotester.abstractions import *
 @pytest.fixture(scope="function")
 def tester():
     mock_tester = MagicMock()
+    dummyout=(MagicMock(),MagicMock(),MagicMock())
+    mock_tester.run_test=MagicMock(return_value=("ret",dummyout))
+    yield mock_tester
 
 @pytest.fixture(scope="function")
 def sweep():
@@ -31,6 +34,7 @@ def action():
 @pytest.fixture(scope="function")
 def read_precon_closure():
     mock_precon_closure= MagicMock()
+    mock_precon_closure[HighLevelActions.READ]=MagicMock()
     yield mock_precon_closure
 
 @pytest.fixture(scope="function")
@@ -50,10 +54,26 @@ class Test_NaiveExecutor:
     def test_adapt(self,executor,adaptation):
         with pytest.raises(ValueError):
             executor.adapt(None)
-        assert False #add more tests as we start to use adaptive Executor
+        executor.adapt(Adaptations.NOCHANGE)
+        executor.adapt(Adaptations.SET_V_INC)
+        executor.adapt(Adaptations.RESET_V_INC)
+        executor.adapt(Adaptations.SET_V_DEC)
+        executor.adapt(Adaptations.RESET_V_DEC)
+
+        executor.adapt(Adaptations.SET_PV_INC)
+        executor.adapt(Adaptations.RESET_PV_INC)
+        executor.adapt(Adaptations.SET_PV_DEC)
+        executor.adapt(Adaptations.RESET_PV_DEC)
 
     def test_checkR(self,executor):
-        assert False
+      executor.checkR()
 
     def test_execute(self,executor,action):
-        assert False
+      executor.execute(HighLevelActions.SET_PULSE)
+      executor.execute(HighLevelActions.RESET_PULSE)
+
+      executor.execute(HighLevelActions.SET_SWEEP)
+      executor.execute(HighLevelActions.RESET_SWEEP)
+
+      executor.execute(HighLevelActions.READ)
+      executor.execute(HighLevelActions.FORM)
