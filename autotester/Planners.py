@@ -51,6 +51,8 @@ class NaiveAdaptivePlanner(AbstractPlanner):
                 return HighLevelActions.RESET_SWEEP
             else:
                 return HighLevelActions.SET_SWEEP
+        elif state.deep==True:
+            return HighLevelActions.RE_ANNEAL
         elif state.LRS:
             return HighLevelActions.RESET_PULSE
         elif state.HRS:
@@ -79,6 +81,8 @@ class NaiveFixedPlanner(AbstractPlanner):
                 return HighLevelActions.RESET_SWEEP
             else:
                 return HighLevelActions.SET_SWEEP
+        elif state.deep==True:
+            return HighLevelActions.RE_ANNEAL
         elif state.LRS:
             return HighLevelActions.RESET_PULSE
         elif state.HRS:

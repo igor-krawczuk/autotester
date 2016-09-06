@@ -6,8 +6,6 @@ from .helpers import mytimestamp
 class NaiveTester(object):
 
     def __init__(self, state_estimator, planner, executor,notificator,memory):
-        self.next_id =1
-        self.test_log =[]
 
         self.memory =memory
         self.estimator=state_estimator
@@ -30,16 +28,18 @@ class NaiveTester(object):
         print("Action",next_action)
         step=0
         while next_action is not None and step < max_steps:
-            new_datum = self.executor.execute(adaptation,next_action)
+            new_datum,testerData = self.executor.execute(adaptation,next_action)
             print("Datum",new_datum)
             new_state = self.estimator.estimate_state(new_datum,curstate)
-            self.memory.log(adaptation,next_action,self.curstate,new_state,self.executor.pulseControl,self.executor.sweepControl)  # NOTE XXX bit of an ugliness to reach into executor, might be worth to refactor
-            self.curstate=new_state
-            print("NewState",self.curstate)
-            adaptation = self.planner.get_adaptation(next_action,self.curstate)
-            next_action= self.planner.get_action(self.curstate)
+            self.memory.log(adaptation,next_action,curstate,new_state,self.executor.pulseControl,self.executor.sweepControl,new_datum)
+            # NOTE XXX bit of an ugliness to reach into executor, might be worth to refactor
+            curstate=new_state
+            print("NewState",curstate)
+            adaptation = self.planner.get_adaptation(next_action,curstate)
+            next_action= self.planner.get_action(curstate)
             print("Adaptation",adaptation)
             print("Action",next_action)
             step+=1
         self.memory.save_log()
         self.notificator.done()
+        return curstate
