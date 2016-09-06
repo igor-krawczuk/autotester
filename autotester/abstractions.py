@@ -33,7 +33,7 @@ class controlState(object):
         return d
     def getV(self,action):
       raise NotImplementedError("implement a sensinple switch on the given action to access the Voltage")
-    def getGateV(self,action)
+    def getGateV(self,action):
       raise NotImplementedError("implement a sensinple switch on the given action to access the gateVoltage")
 
 class sweepControl(controlState):
