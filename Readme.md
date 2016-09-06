@@ -1,6 +1,10 @@
+[![Build Status](https://travis-ci.org/wojcech/autotester.svg?branch=master)](https://travis-ci.org/wojcech/autotester)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/10104/badge.svg)](https://scan.coverity.com/projects/wojcech-autotester)
+
 In the course of my masters thesis I need to characterize new electronic devices.
 In order to do it a) less tediously and b) better, I am trying to automate it.
-There are my attempts.
+These are my attempts.
+
 
 # Current features
 
