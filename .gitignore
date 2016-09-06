@@ -4,3 +4,4 @@ MANIFEST
 .eggs/*
 .tox/*
 autotester.egg-info/*
+.coverage

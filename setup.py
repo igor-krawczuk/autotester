@@ -11,7 +11,7 @@ setup(
     download_url = "https://github.com/wojcech/autotester/archive/master.zip",
     keywords = ["tester", "automated"],
     setup_requires = ["pytest-runner"],
-    test_requirements = ['pytest'],
+    test_requirements = ['pytest','pytest-cov'],
     install_requires = [
     "pyvisa",
     "agilentpyvisa",
