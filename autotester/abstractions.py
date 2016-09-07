@@ -208,16 +208,16 @@ class pulseControl(controlState):
                 ground=self.ground_channel,channel=self.inp_channel,gate=self.gate_channel,b15=self.tester)[0]
 
 
-class Log(namedtuple("_Log",["id","adaptation","action","startState","endState","timestamp","pulseControl","sweepControl","testerData","run_id","datum"])):
+class Log(namedtuple("_Log",["local_id","adaptation","action","startState","endState","timestamp","pulseControl","sweepControl","testerData","run_id","datum"])):
 
     def __new__(cls,id,adaptation,action,startState,endState,pulseControl,sweepControl,run_id,datum,testerData=None):
        timestamp=datetime.now()
-       return super(Log,cls).__new__(cls,id,adaptation,action,startState,endState,timestamp,pulseControl,sweepControl,testerData,run_id,datum)
+       return super(Log,cls).__new__(cls,local_id,adaptation,action,startState,endState,timestamp,pulseControl,sweepControl,testerData,run_id,datum)
 
     def to_dicts(self):
        d={}
        log={}
-       log["id"]=self.id
+       log["id"]=self.local_id
        log["run_id"]=self.run_id
        log["adaptation"]=self.adaptation.name
        log["action"]=self.action.name
