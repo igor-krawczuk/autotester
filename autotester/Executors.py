@@ -35,7 +35,7 @@ class NaiveExecutor(Executor):
                     HighLevelActions.RESET_PULSE: initPulseControl.getNewReset(),
                     HighLevelActions.SET_PULSE: initPulseControl.getNewSet(),
                     HighLevelActions.READ: initSweepControl.getNewRead(),
-                    HighLevelActions.FORM: initPulseControl.getNewForm(),
+                    HighLevelActions.FORM: initSweeoControl.getNewForm(),
                     }
 
     def reset(self):

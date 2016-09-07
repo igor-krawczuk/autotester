@@ -13,7 +13,7 @@ class NaiveEstimator(object):
         self.burned_THRESHOLD = burned_THRESHOLD
 
         assert self.LRS_THRESHOLD < self.HRS_THRESHOLD
-    
+
     def estimate_state(self,datum,laststate):
         if datum is None:
             return State.get_pristine()
