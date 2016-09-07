@@ -106,16 +106,16 @@ class sweepControl(controlState):
         raise ValueError("No gate voltage defined for this action")
 
     def getNewSet(self):
-        return get_Vsweep(self.setBase, self.setV, self.steps, compliance=5-3,
-                measure_range=MeasureRanges_I.full_auto,
+        return get_Vsweep(self.setBase, self.setV, self.steps, compliance=5e-3,
+                measure_range=MeasureRanges_I.uA100_limited,
                 gate_voltage=self.setGateV, ground=self.ground_channel,b15=self.tester)[0]
     def getNewReset(self):
-        return get_Vsweep(self.resetBase, self.resetV, self.steps, compliance=5-3,
-                measure_range=MeasureRanges_I.full_auto,gate_voltage=self.resetGateV,
+        return get_Vsweep(self.resetBase, self.resetV, self.steps, compliance=5e-3,
+                measure_range=MeasureRanges_I.uA100_limited,gate_voltage=self.resetGateV,
                 ground=self.ground_channel,b15=self.tester)[0]
     def getNewForm(self):
-        return get_Vsweep(self.formBase,self.formV,51,compliance=5-3,
-                measure_range=MeasureRanges_I.full_auto,
+        return get_Vsweep(self.formBase,self.formV,51,compliance=5e-3,
+                measure_range=MeasureRanges_I.uA100_limited,
                 gate_voltage=self.formGateV, ground=self.ground_channel,b15=self.tester)[0]
 
     def getNewRead(self):

@@ -4,8 +4,15 @@ import dataset
 from collections import deque
 from .helpers import mytimestamp
 
+class DillSave(object):
+  """
+  Mixin class providing boilerplate for saving to dill
+  """
+  def dill_save(self,obj,name):
+    with open(name,"wb") as f:
+      dill.dump(obj,f)
 
-class NaiveMemory(object):
+class NaiveMemory(DillSave):
     """
     simplest possible storage enginem simply takes the communicator classes and appends them in a list which gets dilld
     """
@@ -43,10 +50,9 @@ class NaiveMemory(object):
 
     def save_log(self,CURRENT_SAMPLE):
       temp_log = [l.to_dicts() for l in self.test_log]
-      with open("{}_{}_autorun.dill".format(mytimestamp(),CURRENT_SAMPLE),"wb") as f:
-            dill.dump(temp_log,f)
+      self.dill_save(temp_log,"{}_{}_autorun.dill".format(mytimestamp(),CURRENT_SAMPLE))
 
-class PostgresMemory(object):
+class PostgresMemory(DillSave):
     """
     Like NaiveMemory, but stays in sync with postgres remote
     """
@@ -105,8 +111,16 @@ class PostgresMemory(object):
 
     def save_log(self,CURRENT_SAMPLE):
       temp_log = [l.to_dicts() for l in self.test_log_local]
-      with open("{}_{}_autorun_unsynced.dill".format(mytimestamp(),CURRENT_SAMPLE),"wb") as f:
-          dill.dump(temp_log,f)
+      local_name="{}_{}_autorun_unsynced.dill".format(mytimestamp(),CURRENT_SAMPLE)
+      self.dill_save(temp_log,local_name)
       temp_log = [l.to_dicts() for l in self.test_log_synced]
-      with open("{}_{}_autorun_synced.dill".format(mytimestamp(),CURRENT_SAMPLE),"wb") as f:
-          dill.dump(self.test_log_synced,f,dill.HIGHEST_PROTOCOL)
+      sync_name= "{}_{}_autorun_synced.dill".format(mytimestamp(),CURRENT_SAMPLE)
+      self.dill_save(temp_log,sync_name)
+
+    def save_log_raw(self,CURRENT_SAMPLE):
+      temp_log = self.test_log_local
+      local_name="{}_{}_autorun_unsynced.dill".format(mytimestamp(),CURRENT_SAMPLE)
+      self.dill_save(temp_log,local_name)
+      temp_log = self.test_log_synced
+      sync_name= "{}_{}_autorun_synced.dill".format(mytimestamp(),CURRENT_SAMPLE)
+      self.dill_save(temp_log,sync_name)

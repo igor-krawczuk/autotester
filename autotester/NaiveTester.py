@@ -12,10 +12,13 @@ class NaiveTester(object):
         self.planner = planner
         self.executor = executor
         self.notificator = notificator
+        self.run_id=0
 
 
 
-    def run(self,CURRENT_SAMPLE, max_steps=100,startState=None):
+    def run(self,CURRENT_SAMPLE, max_steps=100,startState=None,run_id=None):
+        if run_id is not None:
+          self.run_id=run_id
         self.memory.CURRENT_SAMPLE=CURRENT_SAMPLE
         self.executor.CURRENT_SAMPLE=CURRENT_SAMPLE
 
@@ -28,10 +31,11 @@ class NaiveTester(object):
         print("Action",next_action)
         step=0
         while next_action is not None and step < max_steps:
-            new_datum,testerData = self.executor.execute(adaptation,next_action)
+            self.executor.adapt(adaptation)
+            new_datum,tester_data = self.executor.execute(next_action)
             print("Datum",new_datum)
             new_state = self.estimator.estimate_state(new_datum,curstate)
-            self.memory.log(adaptation,next_action,curstate,new_state,self.executor.pulseControl,self.executor.sweepControl,new_datum)
+            self.memory.log(adaptation,next_action,curstate,new_state,self.executor.pulseControl,self.executor.sweepControl,tester_data,self.run_id,new_datum)
             # NOTE XXX bit of an ugliness to reach into executor, might be worth to refactor
             curstate=new_state
             print("NewState",curstate)
@@ -40,6 +44,7 @@ class NaiveTester(object):
             print("Adaptation",adaptation)
             print("Action",next_action)
             step+=1
-        self.memory.save_log()
+        run_id+=1
+        self.memory.save_log(CURRENT_SAMPLE)
         self.notificator.done()
         return curstate

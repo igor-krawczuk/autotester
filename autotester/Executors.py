@@ -35,7 +35,7 @@ class NaiveExecutor(Executor):
                     HighLevelActions.RESET_PULSE: initPulseControl.getNewReset(),
                     HighLevelActions.SET_PULSE: initPulseControl.getNewSet(),
                     HighLevelActions.READ: initSweepControl.getNewRead(),
-                    HighLevelActions.FORM: initSweeoControl.getNewForm(),
+                    HighLevelActions.FORM: initSweepControl.getNewForm(),
                     }
 
     def reset(self):
@@ -78,8 +78,15 @@ class NaiveExecutor(Executor):
             action = HighLevelActions.RESET_SWEEP
 
         impl = self.implementations[action]
-        V=impl.getV(action)
-        gateV=impl.getGateV(action)
+        V=None
+        gateV=None
+        if action in (HighLevelActions.RESET_SWEEP,HighLevelActions.SET_SWEEP,HighLevelActions.FORM,HighLevelActions.READ):
+          V=self.sweepControl.getV(action)
+          gateV=self.sweepControl.getGateV(action)
+        else:
+          V=self.pulseControl.getV(action)
+          gateV=self.pulseControl.getGateV(action)
+
         precon_closure=self.precon_closures.get(action)
         if precon_closure is not None:
             precon_closure()
