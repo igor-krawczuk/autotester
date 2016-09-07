@@ -157,12 +157,12 @@ class pulseControl(controlState):
       else:
         raise ValueError("No gate Voltage defined for this action")
 
-    def getNewSet(self, oldSetup):
+    def getNewSet(self ):
         return get_pulse(0,self.setV,self.width,1,
                 self.slope,self.slope,self.setGateV,
                 self.ground_channel.inp_channel,self.gate_channel,b15=self.tester)[0]
 
-    def getNewReset(self, oldSetup):
+    def getNewReset(self ):
         return get_pulse(0,self.resetV,self.width,1,
                 self.slope,self.slope,self.resetGateV,
                 self.ground_channel.inp_channel,self.gate_channel,b15=self.tester)[0]
