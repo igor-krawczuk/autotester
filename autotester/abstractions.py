@@ -2,6 +2,7 @@ from collections import namedtuple
 from datetime import datetime
 from enum import Enum
 from agilentpyvisa.reram_helpers_B1500.get_setups import get_pulse,get_Vsweep
+from agilentpyvisa.B1500.enums import MeasureRanges_I,MeasureRanges_V,MeasureModes,MeasureSides
 
 class controlState(object):
     def __init__(self):
