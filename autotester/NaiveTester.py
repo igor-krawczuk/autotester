@@ -44,7 +44,7 @@ class NaiveTester(object):
             print("Adaptation",adaptation)
             print("Action",next_action)
             step+=1
-        run_id+=1
+        self.run_id+=1
         self.memory.save_log(CURRENT_SAMPLE)
         self.notificator.done()
         return curstate

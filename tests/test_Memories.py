@@ -5,6 +5,10 @@ from autotester.Memories import NaiveMemory,PostgresMemory
 from autotester.abstractions import *
 import pandas as pd
 
+@pytest.fixture()
+def state():
+  yield State.get_pristine()
+
 @pytest.fixture(scope="function")
 def tester_data():
   yield testerData(HighLevelActions.READ,pd.DataFrame(dict(one=[1,2,3],two=[5,6,7])))
@@ -13,6 +17,17 @@ def tester_data():
 def naive_mem():
   yield NaiveMemory()
 
+@pytest.fixture()
+def pulseC():
+  yield pulseControl(None,0,0,0,0,0,0)
+
+@pytest.fixture()
+def sweepC():
+  yield sweepControl(None,0,0,0,0)
+
+@pytest.fixture()
+def datum():
+    yield Datum(0,0,0,0,0,0)
 
 @pytest.fixture(autouse=True)
 def no_dataset(monkeypatch):
@@ -50,13 +65,12 @@ class Test_NaiveMemory:
     assert naive_mem.next_id ==1
     assert len(naive_mem.test_log)==0
 
-  def test_log(self,naive_mem, tester_data):
+  def test_log(self,naive_mem,state,tester_data,pulseC,sweepC,datum):
     naive_mem.log(Adaptations.NOCHANGE,
         HighLevelActions.READ,
-        State.get_pristine(),
-        State.get_pristine(),
-        pulseControl(0,0,0,0,0,0),sweepControl(0,0,0,0),tester_data,
-        1,Datum(0,0,0,0,0,0))
+        state,
+        state,
+        pulseC,sweepC,tester_data,1,datum)
     assert naive_mem.next_id == 2
     assert len(naive_mem.test_log)==1
 
@@ -75,11 +89,10 @@ class Test_PostgresMemory:
     assert len(mem.test_log_local)==0
     assert len(mem.test_log_synced)==0
 
-  def test_log(self,postgres_mem,tester_data):
+  def test_log(self,postgres_mem,state,tester_data,pulseC,sweepC,datum):
     postgres_mem.log(Adaptations.NOCHANGE,HighLevelActions.READ,
-        State.get_pristine(),State.get_pristine(),
-        pulseControl(0,0,0,0,0,0),sweepControl(0,0,0,0),tester_data,1,
-        Datum(0,0,0,0,0,0))
+        state,state,
+        pulseC,sweepC,tester_data,1,datum)
     assert len(postgres_mem.test_log_local)==1
 
   def test_sync(self,postgres_mem):
