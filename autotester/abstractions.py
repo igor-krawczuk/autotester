@@ -200,12 +200,12 @@ class pulseControl(controlState):
     def getNewSet(self ):
         return get_pulse(0,self.setV,self.width,1,
                 self.slope,self.slope,self.setGateV,
-                self.ground_channel,self.inp_channel,self.gate_channel,b15=self.tester)[0]
+                ground=self.ground_channel,channel=self.inp_channel,gate=self.gate_channel,b15=self.tester)[0]
 
     def getNewReset(self ):
         return get_pulse(0,self.resetV,self.width,1,
                 self.slope,self.slope,self.resetGateV,
-                self.ground_channel,self.inp_channel,self.gate_channel,b15=self.tester)[0]
+                ground=self.ground_channel,channel=self.inp_channel,gate=self.gate_channel,b15=self.tester)[0]
 
 
 class Log(namedtuple("_Log",["id","adaptation","action","startState","endState","timestamp","pulseControl","sweepControl","testerData","run_id","datum"])):
