@@ -58,7 +58,7 @@ class PostgresMemory(DillSave):
     """
     def __init__(self, pg_path, sync_every=10):
         self.db = dataset.connect(pg_path)
-        self.last_id =self.db["run"].find_one(order_by=["-id"],_limit=1)
+        self.last_id =self.db["run"].find_one(order_by=["-id"],_limit=1)[0]["id"]
 
         self.sync_every=sync_every
         self.since_last_sync=0
