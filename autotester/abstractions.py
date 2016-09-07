@@ -5,8 +5,9 @@ from agilentpyvisa.reram_helpers_B1500.get_setups import get_pulse,get_Vsweep
 from agilentpyvisa.B1500.enums import MeasureRanges_I,MeasureRanges_V,MeasureModes,MeasureSides
 
 class controlState(object):
-    def __init__(self):
+    def __init__(self,tester):
         self.last_change=datetime.now()
+        self.tester=tester
     def vars(self):
         return self.__slots__
 
@@ -28,6 +29,8 @@ class controlState(object):
     def to_dict(self,log_id=None):
         d=dict()
         for v in self.__slots__:
+            if v=="tester":
+              continue
             d[v]=getattr(self,v)
         if log_id is not None:
             d["log_id"]=log_id
@@ -43,12 +46,12 @@ class sweepControl(controlState):
             "resetBase","resetV","resetGateV",
             "readBase","readV","readGateV",
             "formBase","formV","formGateV",
-            "steps","ground_channel","inp_channel"
+            "steps","ground_channel","inp_channel","tester"
             ]
 
     # TODO XXX having this many fields is smelly, as is having the read defaults. refactor this
     # probably define a new intermediate state for individual sweeps, and just keep that in a action dict
-    def __init__(self, setV,setGateV,resetV,resetGateV,
+    def __init__(self,tester, setV,setGateV,resetV,resetGateV,
             setBase=0,resetBase=0,
             formBase=0,formV=3.0,formGateV=1.9,
             readBase=200e-6,readV=250e-6,readGateV=1.9,
@@ -76,7 +79,7 @@ class sweepControl(controlState):
         self.ground_channel = ground_channel
         self.gate_channel = gate_channel
         self.inp_channel = inp_channel
-        super().__init__()
+        super().__init__(tester)
 
     def getV(self,action):
       if action==HighLevelActions.RESET_SWEEP:
@@ -104,24 +107,27 @@ class sweepControl(controlState):
 
     def getNewSet(self):
         return get_Vsweep(self.setBase, self.setV, self.steps, compliance=5-3,
-                measure_range=MeasureRanges_I.full_auto,gate_voltage=self.setGateV, ground=self.ground_channel)[0]
+                measure_range=MeasureRanges_I.full_auto,
+                gate_voltage=self.setGateV, ground=self.ground_channel,b15=self.tester)[0]
     def getNewReset(self):
         return get_Vsweep(self.resetBase, self.resetV, self.steps, compliance=5-3,
-                measure_range=MeasureRanges_I.full_auto,gate_voltage=self.resetGateV, ground=self.ground_channel)[0]
+                measure_range=MeasureRanges_I.full_auto,gate_voltage=self.resetGateV,
+                ground=self.ground_channel,b15=self.tester)[0]
     def getNewForm(self):
         return get_Vsweep(self.formBase,self.formV,51,compliance=5-3,
-                measure_range=MeasureRanges_I.full_auto,gate_voltage=self.formGateV, ground=self.ground_channel)[0]
+                measure_range=MeasureRanges_I.full_auto,
+                gate_voltage=self.formGateV, ground=self.ground_channel,b15=self.tester)[0]
 
     def getNewRead(self):
         return get_Vsweep(self.readBase,self.readV,51,compliance=5e-3,
-                measure_range=MeasureRanges_I.uA100_limited,gate_voltage=self.readGateV, ground=self.ground_channel)[0]
+                measure_range=MeasureRanges_I.uA100_limited,gate_voltage=self.readGateV, ground=self.ground_channel,b15=self.tester)[0]
 
 class pulseControl(controlState):
     __slots__= ["setV","setGateV","resetV","resetGateV","width","slope",
-            "ground_channel","inp_channel"
+            "ground_channel","inp_channel","tester"
             ]
 
-    def __init__(self, setV,setGateV,resetV,resetGateV,width,slope,
+    def __init__(self,tester, setV,setGateV,resetV,resetGateV,width,slope,
             ground_channel=3,inp_channel=101,gate_channel=4):
         self.setV = setV
         self.setGateV = setGateV
@@ -133,7 +139,7 @@ class pulseControl(controlState):
         self.ground_channel = ground_channel
         self.gate_channel = gate_channel
         self.inp_channel = inp_channel
-        super().__init__()
+        super().__init__(tester)
 
     def getV(self,action):
       if action==HighLevelActions.RESET_PULSE:
@@ -154,12 +160,12 @@ class pulseControl(controlState):
     def getNewSet(self, oldSetup):
         return get_pulse(0,self.setV,self.width,1,
                 self.slope,self.slope,self.setGateV,
-                self.ground_channel.inp_channel,self.gate_channel)[0]
+                self.ground_channel.inp_channel,self.gate_channel,b15=self.tester)[0]
 
     def getNewReset(self, oldSetup):
         return get_pulse(0,self.resetV,self.width,1,
                 self.slope,self.slope,self.resetGateV,
-                self.ground_channel.inp_channel,self.gate_channel)[0]
+                self.ground_channel.inp_channel,self.gate_channel,b15=self.tester)[0]
 
 class Datum(namedtuple("_Datum",["R",
     "V",
