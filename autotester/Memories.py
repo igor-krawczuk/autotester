@@ -97,7 +97,6 @@ class PostgresMemory(DillSave):
         self.since_last_sync+=1
         if self.since_last_sync>=self.sync_every:
             self.sync(self.sync_every)
-            self.since_last_sync=0
 
     def sync(self,chunk_size):
         while len(self.test_log_local)>0:
@@ -114,6 +113,7 @@ class PostgresMemory(DillSave):
                   self.db[k].insert(v,ensure=True)
 
             self.test_log_synced.append(temp_log)
+        self.since_last_sync=0
 
     def save_log(self,CURRENT_SAMPLE):
       temp_log = [l.to_dicts() for l in self.test_log_local]
@@ -122,6 +122,7 @@ class PostgresMemory(DillSave):
       temp_log = [l.to_dicts() for l in self.test_log_synced]
       sync_name= "{}_{}_autorun_synced.dill".format(mytimestamp(),CURRENT_SAMPLE)
       self.dill_save(temp_log,sync_name)
+      self.sync(self.sync_every)
 
     def save_log_raw(self,CURRENT_SAMPLE):
       temp_log = self.test_log_local
