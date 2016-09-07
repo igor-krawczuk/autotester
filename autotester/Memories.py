@@ -105,6 +105,9 @@ class PostgresMemory(DillSave):
             # TODO figure out how to do this in batches using chunk_size
 
             log_dict=temp_log.to_dicts()
+            #### TODO HACK just so we save the sample information now
+            if hasattr(self,"CURRENT_SAMPLE"):
+              log_dict["sample"]=self.CURRENT_SAMPLE
             self.last_id=self.db["log"].insert(log_dict["log"],ensure=True)
             for k,v in log_dict.items(): # serialize the log + all members into a dict of dicts, every member gets their own table, and internally the same
                 if k!="log":
