@@ -217,7 +217,7 @@ class Log(namedtuple("_Log",["local_id","adaptation","action","startState","endS
     def to_dicts(self):
        d={}
        log={}
-       log["id"]=self.local_id
+       log["local_id"]=self.local_id
        log["run_id"]=self.run_id
        log["adaptation"]=self.adaptation.name
        log["action"]=self.action.name
