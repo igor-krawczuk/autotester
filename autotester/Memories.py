@@ -58,7 +58,11 @@ class PostgresMemory(DillSave):
     """
     def __init__(self, pg_path, sync_every=10):
         self.db = dataset.connect(pg_path)
-        self.last_id =self.db["run"].find_one(order_by=["-id"],_limit=1).get(["id"])
+
+        self.last_id =None
+        db_id=self.db["run"].find_one(order_by=["-id"],_limit=1)
+        if db_id is not None:
+          self.last_id=db_id.get("id")
         if self.last_id is None:
           self.last_id=0
 
