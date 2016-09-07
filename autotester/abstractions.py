@@ -226,12 +226,12 @@ class Log(namedtuple("_Log",["local_id","adaptation","action","startState","endS
        d["log"]=log
 
        d["datum"]=self.datum.to_dict()
-       d["pulseControl"]=self.pulseControl.to_dict(self.id)
-       d["sweepControl"]=self.sweepControl.to_dict(self.id)
+       d["pulseControl"]=self.pulseControl.to_dict(self.local_id)
+       d["sweepControl"]=self.sweepControl.to_dict(self.local_id)
 
-       d["startState"]=self.startState.to_dict(self.id)
-       d["testerData"]=self.testerData.to_dict(self.id)
-       d["endState"]=self.endState.to_dict(self.id)
+       d["startState"]=self.startState.to_dict(self.local_id)
+       d["testerData"]=self.testerData.to_dict(self.local_id)
+       d["endState"]=self.endState.to_dict(self.local_id)
 
        return d
 
