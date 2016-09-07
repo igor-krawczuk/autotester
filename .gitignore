@@ -5,3 +5,5 @@ MANIFEST
 .tox/*
 autotester.egg-info/*
 .coverage
+*.dill
+venv/*

@@ -48,7 +48,7 @@ class sweepControl(controlState):
     # probably define a new intermediate state for individual sweeps, and just keep that in a action dict
     def __init__(self, setV,setGateV,resetV,resetGateV,
             setBase=0,resetBase=0,
-            formbase=0,formV=3.0,formGateV=1.9,
+            formBase=0,formV=3.0,formGateV=1.9,
             readBase=200e-6,readV=250e-6,readGateV=1.9,
             ground_channel=3,inp_channel=101,gate_channel=4,steps=100):
 
@@ -116,7 +116,7 @@ class sweepControl(controlState):
 
 class pulseControl(controlState):
     __slots__= ["setV","setGateV","resetV","resetGateV","width","slope",
-            "steps","ground_channel","inp_channel"
+            "ground_channel","inp_channel"
             ]
 
     def __init__(self, setV,setGateV,resetV,resetGateV,width,slope,
@@ -221,7 +221,7 @@ class Log(namedtuple("_Log",["id","adaptation","action","startState","endState",
        d["sweepControl"]=self.sweepControl.to_dict(self.id)
 
        d["startState"]=self.startState.to_dict(self.id)
-       d["testerData"]=testerData.to_dict(self.id)
+       d["testerData"]=self.testerData.to_dict(self.id)
        d["endState"]=self.endState.to_dict(self.id)
 
        return d
@@ -232,9 +232,10 @@ class testerData(object):
         self.frame = dataframe
         self.timestamp = datetime.now()
         self.action=action
-    def to_dict(self,log_id=None):
+
+    def to_dict(self, log_id=None):
         d=dict(timestamp=self.timestamp,action=self.action.name,log_id=log_id)
-        if self.frame:
+        if self.frame is not None:
             d["frame"]=frame=self.frame.to_json()
         return d
 

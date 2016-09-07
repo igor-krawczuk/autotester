@@ -1,4 +1,4 @@
-dill
+dill==0.2.5
 -e git+https://github.com/wojcech/agilentpyvisa.git@554b129db52e972cb53db51212eee223627abef3#egg=agilentpyvisa
 alembic==0.8.7
 dataset==0.6.4
