@@ -91,10 +91,10 @@ class PostgresMemory(DillSave):
             return None
 
     def log(self,adaptation,action,startState,endState,pulseControl,sweepControl,testerData,run_id,datum):
+        self.last_id+=1
         newlog = Log(id=self.last_id,adaptation=adaptation,startState=startState,action=action,endState=endState,pulseControl=pulseControl,sweepControl=sweepControl,testerData=testerData,run_id=run_id,datum=datum)
         self.test_log_local.append(newlog)
         self.since_last_sync+=1
-        self.last_id+=1
         if self.since_last_sync>=self.sync_every:
             self.sync(self.sync_every)
             self.since_last_sync=0
@@ -103,10 +103,13 @@ class PostgresMemory(DillSave):
         while len(self.test_log_local)>0:
             temp_log = self.test_log_local.popleft()
             # TODO figure out how to do this in batches using chunk_size
-            for k,v in temp_log.to_dicts().items(): # serialize the log + all members into a dict of dicts, every member gets their own table, and internally the same
-                insert_id=self.db[k].insert(v)
-                if k=="log":
-                    self.last_id=insert_id
+
+            log_dict=temp_log.to_dicts()
+            self.last_id=self.db["log"].insert(log_dict["log"],ensure=True)
+            for k,v in log_dict.items(): # serialize the log + all members into a dict of dicts, every member gets their own table, and internally the same
+                if k!="log":
+                  self.db[k].insert(v,ensure=True)
+
             self.test_log_synced.append(temp_log)
 
     def save_log(self,CURRENT_SAMPLE):

@@ -3,6 +3,46 @@ from datetime import datetime
 from enum import Enum
 from agilentpyvisa.reram_helpers_B1500.get_setups import get_pulse,get_Vsweep
 from agilentpyvisa.B1500.enums import MeasureRanges_I,MeasureRanges_V,MeasureModes,MeasureSides
+"""
+Enums
+"""
+class HighLevelActions(Enum):
+    FORM =0
+
+    RESET_SWEEP=1
+    SET_SWEEP=2
+
+    RESET_PULSE=3
+    SET_PULSE=4
+    READ = 5  # trigger a readout of the device state
+
+    RE_ANNEAL = 6 # trigger a new anneal cycle as defined in exectutor
+
+class Adaptations(Enum):
+    """
+        Used to communicate a change in control variables from planner to exectuor.
+        The exact amplitude of alteration is determined by the executor.
+        Later we might add additional fuzzy levels (e.g. strong increase)
+        or communicate a desired value. The exact change we can calculate in a separate delegate, IF we need it.
+    """
+    NOCHANGE = 0
+
+    SET_V_INC = 1
+    SET_V_DEC = 2
+
+    RESET_V_INC = 3
+    RESET_V_DEC = 4
+
+    SET_PV_INC = 5
+    SET_PV_DEC = 6
+
+    RESET_PV_INC = 6
+    RESET_PV_DEC = 7
+
+"""
+Muetable States
+"""
+
 
 class controlState(object):
     def __init__(self,tester):
@@ -167,6 +207,71 @@ class pulseControl(controlState):
                 self.slope,self.slope,self.resetGateV,
                 self.ground_channel,self.inp_channel,self.gate_channel,b15=self.tester)[0]
 
+
+class Log(namedtuple("_Log",["id","adaptation","action","startState","endState","timestamp","pulseControl","sweepControl","testerData","run_id","datum"])):
+
+    def __new__(cls,id,adaptation,action,startState,endState,pulseControl,sweepControl,run_id,datum,testerData=None):
+       timestamp=datetime.now()
+       return super(Log,cls).__new__(cls,id,adaptation,action,startState,endState,timestamp,pulseControl,sweepControl,testerData,run_id,datum)
+
+    def to_dicts(self):
+       d={}
+       log={}
+       log["id"]=self.id
+       log["run_id"]=self.run_id
+       log["adaptation"]=self.adaptation.name
+       log["action"]=self.action.name
+       log["timestamp"]=self.timestamp
+
+       d["log"]=log
+
+       d["datum"]=self.datum.to_dict()
+       d["pulseControl"]=self.pulseControl.to_dict(self.id)
+       d["sweepControl"]=self.sweepControl.to_dict(self.id)
+
+       d["startState"]=self.startState.to_dict(self.id)
+       d["testerData"]=self.testerData.to_dict(self.id)
+       d["endState"]=self.endState.to_dict(self.id)
+
+       return d
+
+class testerData(object):
+    __slots__ = ["action","frame","timestamp"]
+    def __init__(self,action,dataframe=None):
+        self.frame = dataframe
+        self.timestamp = datetime.now()
+        self.action=action
+
+    def to_dict(self, log_id=None):
+        d=dict(timestamp=self.timestamp,action=self.action.name,log_id=log_id)
+        if self.frame is not None:
+            d["frame"]=frame=self.frame.to_json()
+        return d
+
+"""
+immutable States
+"""
+class State( namedtuple("__State",
+    ["LRS","HRS",
+        "deep","formed",
+        "annealed","burnedThrough",
+        "burnedOut","untouched",
+        "actionsSinceStateChange","timestamp"])):
+    def __new__(cls,LRS=None,HRS=None,deep=None,formed=None,annealed=None,burnedThrough=None,burnedOut=None,untouched=None,actionsSinceStateChange=None):
+           assert not(LRS and HRS)
+           assert not (untouched and(LRS or HRS or formed or annealed))
+           return super(State,cls).__new__(cls,LRS,HRS,deep,formed,annealed,burnedThrough,burnedOut,untouched,actionsSinceStateChange,timestamp=datetime.now())
+
+    def to_dict(self,log_id=None):
+       d=dict(self._asdict())
+       d["log_id"]=log_id
+       return d
+
+    @staticmethod
+    def get_pristine():
+        return State(untouched=True,LRS=False,HRS=False,deep=False,
+                    formed=False,annealed=False,burnedThrough=False,
+                    burnedOut=False,actionsSinceStateChange=0)
 class Datum(namedtuple("_Datum",["R",
     "V",
     "gateV",
@@ -207,97 +312,3 @@ class Datum(namedtuple("_Datum",["R",
         d["log_id"]=log_id
         return d
 
-
-class Log(namedtuple("_Log",["id","adaptation","action","startState","endState","timestamp","pulseControl","sweepControl","testerData","run_id","datum"])):
-
-    def __new__(cls,id,adaptation,action,startState,endState,pulseControl,sweepControl,run_id,datum,testerData=None):
-       timestamp=datetime.now()
-       return super(Log,cls).__new__(cls,id,adaptation,action,startState,endState,timestamp,pulseControl,sweepControl,testerData,run_id,datum)
-
-    def to_dicts(self):
-       d={}
-       log={}
-       log["id"]=self.id
-       log["run_id"]=self.run_id
-       log["adaptation"]=self.adaptation.name
-       log["action"]=self.action.name
-       log["timestamp"]=self.timestamp
-       d["log"]=log
-
-       d["datum"]=self.datum.to_dict()
-       d["pulseControl"]=self.pulseControl.to_dict(self.id)
-       d["sweepControl"]=self.sweepControl.to_dict(self.id)
-
-       d["startState"]=self.startState.to_dict(self.id)
-       d["testerData"]=self.testerData.to_dict(self.id)
-       d["endState"]=self.endState.to_dict(self.id)
-
-       return d
-
-class testerData(object):
-    __slots__ = ["action","frame","timestamp"]
-    def __init__(self,action,dataframe=None):
-        self.frame = dataframe
-        self.timestamp = datetime.now()
-        self.action=action
-
-    def to_dict(self, log_id=None):
-        d=dict(timestamp=self.timestamp,action=self.action.name,log_id=log_id)
-        if self.frame is not None:
-            d["frame"]=frame=self.frame.to_json()
-        return d
-
-class HighLevelActions(Enum):
-    FORM =0
-
-    RESET_SWEEP=1
-    SET_SWEEP=2
-
-    RESET_PULSE=3
-    SET_PULSE=4
-    READ = 5  # trigger a readout of the device state
-
-    RE_ANNEAL = 6 # trigger a new anneal cycle as defined in exectutor
-
-class Adaptations(Enum):
-    """
-        Used to communicate a change in control variables from planner to exectuor.
-        The exact amplitude of alteration is determined by the executor.
-        Later we might add additional fuzzy levels (e.g. strong increase)
-        or communicate a desired value. The exact change we can calculate in a separate delegate, IF we need it.
-    """
-    NOCHANGE = 0
-
-    SET_V_INC = 1
-    SET_V_DEC = 2
-
-    RESET_V_INC = 3
-    RESET_V_DEC = 4
-
-    SET_PV_INC = 5
-    SET_PV_DEC = 6
-
-    RESET_PV_INC = 6
-    RESET_PV_DEC = 7
-
-class State( namedtuple("__State",
-    ["LRS","HRS",
-        "deep","formed",
-        "annealed","burnedThrough",
-        "burnedOut","untouched",
-        "actionsSinceStateChange","timestamp"])):
-    def __new__(cls,LRS=None,HRS=None,deep=None,formed=None,annealed=None,burnedThrough=None,burnedOut=None,untouched=None,actionsSinceStateChange=None):
-           assert not(LRS and HRS)
-           assert not (untouched and(LRS or HRS or formed or annealed))
-           return super(State,cls).__new__(cls,LRS,HRS,deep,formed,annealed,burnedThrough,burnedOut,untouched,actionsSinceStateChange,timestamp=datetime.now())
-
-    def to_dict(self,log_id=None):
-       d=dict(self._asdict())
-       d["log_id"]=log_id
-       return d
-
-    @staticmethod
-    def get_pristine():
-        return State(untouched=True,LRS=False,HRS=False,deep=False,
-                    formed=False,annealed=False,burnedThrough=False,
-                    burnedOut=False,actionsSinceStateChange=0)
