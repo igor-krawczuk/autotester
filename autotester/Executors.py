@@ -34,7 +34,7 @@ class NaiveExecutor(Executor):
                     HighLevelActions.SET_SWEEP: initSweepControl.getNewSet(),
                     HighLevelActions.RESET_PULSE: initPulseControl.getNewReset(),
                     HighLevelActions.SET_PULSE: initPulseControl.getNewSet(),
-                    HighLevelActions.READ: initPulseControl.getNewRead(),
+                    HighLevelActions.READ: initSweepControl.getNewRead(),
                     HighLevelActions.FORM: initPulseControl.getNewForm(),
                     }
 
