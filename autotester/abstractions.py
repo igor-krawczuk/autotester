@@ -1,6 +1,7 @@
 from collections import namedtuple
 from datetime import datetime
 from enum import Enum
+from agilentpyvisa.reram_helpers_B1500.get_setups import get_pulse,get_Vsweep
 
 class controlState(object):
     def __init__(self):
@@ -101,17 +102,17 @@ class sweepControl(controlState):
         raise ValueError("No gate voltage defined for this action")
 
     def getNewSet(self):
-        return get_Vsweep(self.setBase, self.setV, self.steps, compliance=300e-6,
+        return get_Vsweep(self.setBase, self.setV, self.steps, compliance=5-3,
                 measure_range=MeasureRanges_I.full_auto,gate_voltage=self.setGateV, ground=self.ground_channel)[0]
     def getNewReset(self):
-        return get_Vsweep(self.resetBase, self.resetV, self.steps, compliance=300e-6,
+        return get_Vsweep(self.resetBase, self.resetV, self.steps, compliance=5-3,
                 measure_range=MeasureRanges_I.full_auto,gate_voltage=self.resetGateV, ground=self.ground_channel)[0]
     def getNewForm(self):
-        return get_Vsweep(self.formBase,self.formV,51,compliance=300e-6,
+        return get_Vsweep(self.formBase,self.formV,51,compliance=5-3,
                 measure_range=MeasureRanges_I.full_auto,gate_voltage=self.formGateV, ground=self.ground_channel)[0]
 
     def getNewRead(self):
-        return get_Vsweep(self.readBase,self.readV,51,compliance=300e-6,
+        return get_Vsweep(self.readBase,self.readV,51,compliance=5-e3,
                 measure_range=MeasureRanges_I.uA100_limited,gate_voltage=self.readGateV, ground=self.ground_channel)[0]
 
 class pulseControl(controlState):
