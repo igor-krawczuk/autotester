@@ -44,7 +44,7 @@ class NaiveMemory(DillSave):
             return None
 
     def log(self,adaptation,action,startState,endState,pulseControl,sweepControl, testerData,run_id,datum):
-        newlog = Log(id=self.next_id,adaptation=adaptation,startState=startState,action=action,endState=endState,pulseControl=pulseControl,sweepControl=sweepControl,testerData=testerData,run_id=run_id,datum=datum)
+        newlog = Log(local_id=self.next_id,adaptation=adaptation,startState=startState,action=action,endState=endState,pulseControl=pulseControl,sweepControl=sweepControl,testerData=testerData,run_id=run_id,datum=datum)
         self.test_log.append(newlog)
         self.next_id+=1
 
@@ -98,7 +98,7 @@ class PostgresMemory(DillSave):
 
     def log(self,adaptation,action,startState,endState,pulseControl,sweepControl,testerData,run_id,datum):
         self.last_id+=1
-        newlog = Log(id=self.last_id,adaptation=adaptation,startState=startState,action=action,endState=endState,pulseControl=pulseControl,sweepControl=sweepControl,testerData=testerData,run_id=run_id,datum=datum)
+        newlog = Log(local_id=self.last_id,adaptation=adaptation,startState=startState,action=action,endState=endState,pulseControl=pulseControl,sweepControl=sweepControl,testerData=testerData,run_id=run_id,datum=datum)
         self.test_log_local.append(newlog)
         self.since_last_sync+=1
         if self.since_last_sync>=self.sync_every:

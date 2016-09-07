@@ -58,11 +58,11 @@ def sweepC():
 
 @pytest.fixture()
 def log(adp,act,state,pulseC,sweepC,testd):
-  yield Log(id=0,adaptation=adp,action=act,startState=state,endState=state,pulseControl=pulseC,sweepControl=sweepC,run_id=5,datum=datum,testerData=testd)
+  yield Log(local_id=0,adaptation=adp,action=act,startState=state,endState=state,pulseControl=pulseC,sweepControl=sweepC,run_id=5,datum=datum,testerData=testd)
 
 class Test_Log:
   def test_init(self,testd,adp,act,datum,state,pulseC,sweepC):
-    log = Log(id=0,adaptation=adp,action=act,startState=state,endState=state,pulseControl=pulseC,sweepControl=sweepC,run_id=5,datum=datum,testerData=testd)
+    log = Log(local_id=0,adaptation=adp,action=act,startState=state,endState=state,pulseControl=pulseC,sweepControl=sweepC,run_id=5,datum=datum,testerData=testd)
 
   def test_to_dicts(self,log):
     d=log.test_to_dicts()
