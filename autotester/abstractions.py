@@ -112,7 +112,7 @@ class sweepControl(controlState):
                 measure_range=MeasureRanges_I.full_auto,gate_voltage=self.formGateV, ground=self.ground_channel)[0]
 
     def getNewRead(self):
-        return get_Vsweep(self.readBase,self.readV,51,compliance=5-e3,
+        return get_Vsweep(self.readBase,self.readV,51,compliance=5e-3,
                 measure_range=MeasureRanges_I.uA100_limited,gate_voltage=self.readGateV, ground=self.ground_channel)[0]
 
 class pulseControl(controlState):
