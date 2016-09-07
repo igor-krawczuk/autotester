@@ -210,7 +210,7 @@ class pulseControl(controlState):
 
 class Log(namedtuple("_Log",["local_id","adaptation","action","startState","endState","timestamp","pulseControl","sweepControl","testerData","run_id","datum"])):
 
-    def __new__(cls,id,adaptation,action,startState,endState,pulseControl,sweepControl,run_id,datum,testerData=None):
+    def __new__(cls,local_id,adaptation,action,startState,endState,pulseControl,sweepControl,run_id,datum,testerData=None):
        timestamp=datetime.now()
        return super(Log,cls).__new__(cls,local_id,adaptation,action,startState,endState,timestamp,pulseControl,sweepControl,testerData,run_id,datum)
 
