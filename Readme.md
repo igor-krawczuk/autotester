@@ -4,6 +4,7 @@
 In the course of my masters thesis I need to characterize new electronic devices.
 In order to do it a) less tediously and b) better, I am trying to automate it.
 These are my attempts.
+# WARNING: still a work in progress, and don't expect 100% clean code, since I am working on this as a break when doing measurements and working on other stuff. It is usable, but unstable
 
 
 # Current features
