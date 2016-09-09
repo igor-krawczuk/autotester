@@ -184,7 +184,7 @@ class pulseControl(controlState):
     def getV(self,action):
       if action==HighLevelActions.RESET_PULSE:
         return self.resetV
-      elif action==HighLevelActionsPULSESWEEP:
+      elif action==HighLevelActions.SET_PULSE:
         return self.setV
       else:
         raise ValueError("No Voltage defined for this action")
@@ -192,7 +192,7 @@ class pulseControl(controlState):
     def getGateV(self,action):
       if action==HighLevelActions.RESET_PULSE:
         return self.resetGateV
-      elif action==HighLevelActionsPULSESWEEP:
+      elif action==HighLevelActions.SET_PULSE:
         return self.setGateV
       else:
         raise ValueError("No gate Voltage defined for this action")
